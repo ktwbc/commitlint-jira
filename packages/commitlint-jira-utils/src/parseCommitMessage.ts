@@ -7,9 +7,10 @@ import {
 } from './commitlintJiraConstants'
 
 const parseCommitMessage: TParseCommitMessage = commitMessage => {
-  const [rawCommitHeader, commitFooter] = commitMessage.split(
-    COMMIT_MESSAGE_SEPARATOR,
-  )
+  const [rawCommitHeader, commitFooter] =
+    commitMessage.indexOf(COMMIT_MESSAGE_SEPARATOR) <= -1
+      ? ['', commitMessage]
+      : commitMessage.split(COMMIT_MESSAGE_SEPARATOR)
   const rawCommitStatus = rawCommitHeader.split(COMMIT_STATUS_SEPARATORS.end)
   const commitStatus = rawCommitStatus.length
     ? rawCommitStatus[0].replace(COMMIT_STATUS_SEPARATORS.start, '')
@@ -21,9 +22,9 @@ const parseCommitMessage: TParseCommitMessage = commitMessage => {
       .split(COMMIT_TASK_IDS_SEPARATOR)
       .map(taskId => taskId.trim())
       .filter(taskId => taskId),
-    commitFooter: commitFooter.trim(),
-    commitHeader: commitHeader.trim(),
-    commitStatus: commitStatus.trim(),
+    commitFooter: commitFooter ? commitFooter.trim() : '',
+    commitHeader: commitHeader ? commitHeader.trim() : '',
+    commitStatus: commitStatus ? commitStatus.trim() : '',
   }
 }
 
